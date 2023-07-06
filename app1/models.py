@@ -691,7 +691,7 @@ class stock_itemcreation(models.Model):
     quantity=models.IntegerField(max_length=100,null=True,blank=True)
     rate=models.IntegerField(max_length=100,null=True,blank=True)
     per=models.IntegerField(max_length=100,null=True,blank=True)
-    value1=models.IntegerField(max_length=100,null=True,blank=True)
+    value=models.IntegerField(max_length=100,null=True,blank=True)
 
 class analysis_view(models.Model):
     comp=models.ForeignKey(Companies,on_delete=models.CASCADE)

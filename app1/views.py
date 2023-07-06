@@ -5147,65 +5147,67 @@ def balancesheet(request):
             return redirect('/')
         cmp=Companies.objects.get(id=t_id)
         leg= tally_ledger.objects.filter(company_id =t_id).values()
-        clob=leg.filter(under='Current_Liabilities').values('opening_blnc')                                            
+        clob=leg.filter(under='Current_Liabilities').values('current_blnc')                                            
         c=len(clob)  
         print('cl')                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
         print(clob)
-        sclob=sum(clob.values_list('opening_blnc',flat=True))
+        sclob=sum(clob.values_list('current_blnc',flat=True))
         print("hi") 
         print(sclob)
-        bdob=leg.filter(under='Branch_Divisions').values('opening_blnc')
-        sbdob=sum(bdob.values_list('opening_blnc',flat=True))
+        bdob=leg.filter(under='Branch_Divisions').values('current_blnc')
+        sbdob=sum(bdob.values_list('current_blnc',flat=True))
         print('bd')
         print(sbdob)
-        bdob=leg.filter(under='Branch_Divisions').values('opening_blnc')
-        sbdob=sum(bdob.values_list('opening_blnc',flat=True))
-        # print('bd')
-        # print(sbdob)
-        coa=leg.filter(under='Capital_Account').values('opening_blnc')
-        scoa=sum(coa.values_list('opening_blnc',flat=True))
+     
+       
+        coa=leg.filter(under='Capital_Account').values('current_blnc')
+        scoa=sum(coa.values_list('current_blnc',flat=True))
     
         # print(scoa) 
-        faob=leg.filter(under='Fixed_Assets').values('opening_blnc')
-        sfa=sum(faob.values_list('opening_blnc',flat=True))
+        faob=leg.filter(under='Fixed_Assets').values('current_blnc')
+        sfa=sum(faob.values_list('current_blnc',flat=True))
         # print(sfa) 
-        llob=leg.filter(under='Loans-Liability').values('opening_blnc')
-        sllob=sum(llob.values_list('opening_blnc',flat=True))
+        llob=leg.filter(under='Loans-Liability').values('current_blnc')
+        sllob=sum(llob.values_list('current_blnc',flat=True))
         # print(sllob) 
     
-        iob=leg.filter(under='Investments').values('opening_blnc')
-        siob=sum(iob.values_list('opening_blnc',flat=True))
+        iob=leg.filter(under='Investments').values('current_blnc')
+        siob=sum(iob.values_list('current_blnc',flat=True))
         # print(iob)    
         
-        ca=leg.filter(under='Current_Assets').values('opening_blnc')
-        sca=sum(ca.values_list('opening_blnc',flat=True))
+        ca=leg.filter(under='Current_Assets').values('current_blnc')
+        sca=sum(ca.values_list('current_blnc',flat=True))
         print('ANN')
         print(sca)  
         TL=0             
         TL= sfa+sllob+sca+scoa
         print(TL)
-        TA=0
-        TA=sclob+sbdob
-        
+         #ledgers opening balance total
+        ledgerstotal=tally_ledger.objects.filter(company_id =t_id).values('opening_blnc')
+        sledg=sum(ledgerstotal.values_list('opening_blnc',flat=True))
+        print(sledg)
     # balance sheet profit and loss
     #closing stock
         #closing stock
     std1=stock_itemcreation.objects.filter(company_id =t_id).values()
     std=stock_itemcreation.objects.all()
-    st=std1.filter(under =t_id).values('value1') 
+    st=std1.filter(under =t_id).values('value') # opening stock
     rtfd=std1.filter(under =t_id).values('rate_of_duty')  
     print("hi")
-    pca=sum(st.values_list('value1',flat=True))
-    prtfd=sum(rtfd.values_list('rate_of_duty',flat=True))
-    pflose=pca-prtfd
+    pca=sum(st.values_list('value',flat=True))
+    # prtfd=sum(rtfd.values_list('rate_of_duty',flat=True))
+    # pflose=pca-prtfd
+    TA=0
+    TA=sclob+sbdob
+    TAPL=0
+    TAPL=TA+pca
+    
     print('profit a')    
-    print(pca)
-    print(prtfd)
-    print(pflose)
-    if pflose>TA:
-            dif=pflose-TA
+    
+    if pca>sledg:
+            dif=pca-sledg
     else:
-            dif=TA-pflose
+            dif=sledg-pca
     total_grp=0
     total_direct=0
     total=0
@@ -5231,8 +5233,10 @@ def balancesheet(request):
              'sfa' :sfa,
              'sllob':sllob,
              'siob':siob,
-             'sca':sca,
+             'pca':pca,
              'TL':TL,
+             'TA':TA,
+             'sledg':sledg,
              'total':total,
              'total_income':total_income,
              'total_direct':total_direct,
@@ -5240,7 +5244,7 @@ def balancesheet(request):
              'total_purch':total_purch,
              'total_direct_exp':total_direct_exp,
              'total_indirect':total_indirect,
-             'pflose':pflose,
+             
              'dif':dif,
              'closing_value':closing_value 
             }
@@ -12623,11 +12627,11 @@ def profit(request):
             
     #closing stock
     for k in  balance_group:
-        if k.value1=='':
+        if k.value=='':
             total_grp+=0
         
         else:    
-            total_grp+=int(k.value1)
+            total_grp+=int(k.value)
         
     #purchase account total 
     
