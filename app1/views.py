@@ -5198,9 +5198,22 @@ def balancesheet(request):
     # prtfd=sum(rtfd.values_list('rate_of_duty',flat=True))
     # pflose=pca-prtfd
     TA=0
+    
     TA=sclob+sbdob
     TAPL=0
+    A=TA
+    L=TL
+    
     TAPL=TA+pca
+    if TA>TL:
+            d=TA-TL
+            
+            TL=TL+d
+            
+    else:
+            d=TL-TA
+            
+            TA=TA+d
     
     print('profit a')    
     
@@ -5234,6 +5247,7 @@ def balancesheet(request):
              'sllob':sllob,
              'siob':siob,
              'pca':pca,
+             'sca':sca,
              'TL':TL,
              'TA':TA,
              'sledg':sledg,
@@ -5244,8 +5258,10 @@ def balancesheet(request):
              'total_purch':total_purch,
              'total_direct_exp':total_direct_exp,
              'total_indirect':total_indirect,
-             
+             'd':d,
              'dif':dif,
+             'A':A,
+             'L':L,
              'closing_value':closing_value 
             }
     return render(request,'balancesheet.html',context)  

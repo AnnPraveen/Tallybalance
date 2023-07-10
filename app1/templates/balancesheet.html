@@ -32,7 +32,10 @@
                         <div style="margin-left:15px;font-size:16px"><a href="{% url 'groupsummary' 01 %}">Current Liabilities</a></div>
                         <div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px">{{sclob}}</div> 
                         <div style="margin-left:15px;font-size:16px"><a href="{% url 'groupsummary' 02 %}">Branch/Divisions</a></div>
-                        <div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px">{{sbdob}}</div> 
+                        <div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px">{{sbdob}}</div>
+                        {% if L > A %}
+                    </br>
+                </br>
                         <div style="margin-left:15px;font-size:16px"><a href="{% url 'profit'  %}">Profit &Loss Account</a></div>
                         <div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px">{{pca}}</div>
                         <div style="margin-left:35px;font-style: italic;"><a href="{% url 'groupsummary' 02 %}">Opening Balance</a></div>
@@ -41,16 +44,42 @@
                         <div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px">.</div>
                         <div style="text-align:center; margin-top:-18px;margin-right:18px;font-size:15px">.</div>
                         <div style="margin-left:35px;font-style: italic;"><a href="">Difference in opening Balances</a></div>
-                        <div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px">{{dif}}</div>
+                        <div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px">{{d}}</div>
                         <div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px"></div>
                     </br>
                 </br>
             </br>
         </br>
     </br>
+                        <div style="margin-left:15px;font-size:16px"><a href="{% url 'groupsummary' 01 %}"></a>Total</div><div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px">{{TA}}</div>
+                        {% else %}
+                
+                    </br>
+                </br>
+            </br>
+        </br>
+    </br>
 </br>
-                       
+</br>
+</br>
+</br>
+</br>
+</br>
+</br>
+</br>
+
+              
 <div style="margin-left:15px;font-size:16px"><a href="{% url 'groupsummary' 01 %}"></a>Total</div><div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px">{{TA}}</div>
+                        {% endif %}
+                    </br>
+                </br>
+            </br>
+        </br>
+    </br>
+
+
+              
+
                        </div>
                         <!-- <div class="col-sm-1 col-md-1" style="border-left:1px solid whitesmoke; height: 500px;"></div> -->
                        
@@ -79,15 +108,36 @@
                     <div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px">{{siob}}</div> 
                     <div style="margin-left:35px;font-size:16px"><a href="{% url 'currentassets' %}">Current Assets</a></div> 
                     <div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px">{{sca}}</div> 
-                   
-                    
+
+                    {% if L < A %}
                 </br>
             </br>
+                    <div style="margin-left:15px;font-size:16px"><a href="{% url 'profit'  %}">Profit &Loss Account</a></div>
+                    <div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px">{{pca}}</div>
+                    <div style="margin-left:35px;font-style: italic;"><a href="{% url 'groupsummary' 02 %}">Opening Balance</a></div>
+                    <div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px">.</div>
+                    <div style="margin-left:35px;font-style: italic;"><a href="">Current Period</a>..{{pca}}</div>
+                    <div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px">.</div>
+                    <div style="text-align:center; margin-top:-18px;margin-right:18px;font-size:15px">.</div>
+                    <div style="margin-left:35px;font-style: italic;"><a href="">Difference in opening Balances</a></div>
+                    <div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px">{{d}}</div>
+                    <div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px"></div>
+                </br>
+            </br></br>
+        
+    
+<div style="margin-left:15px;font-size:16px"><a href="{% url 'groupsummary' 01 %}">Total</a></div><div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px">{{TL}}</div>   
+                    {% else %}
+                </br>
+            </br></br>
         </br>
     </br>
-</br>
+</br></br>
 </br>
 <div style="margin-left:15px;font-size:16px"><a href="{% url 'groupsummary' 01 %}">Total</a></div><div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px">{{TL}}</div>             
+               </div>
+                    {% endif %} 
+               
                </div>
 </div>
     </div>
