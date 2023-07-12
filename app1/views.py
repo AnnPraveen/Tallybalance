@@ -5177,11 +5177,11 @@ def balancesheet(request):
         
         ca=leg.filter(under='Current_Assets').values('current_blnc')
         sca=sum(ca.values_list('current_blnc',flat=True))
-        print('ANN')
+      
         print(sca)  
-        TL=0             
-        TL= sfa+sllob+sca+scoa
-        print(TL)
+        TA=0             
+        TA= sfa+sllob+sca+scoa+siob
+        print(TA)
          #ledgers opening balance total
         ledgerstotal=tally_ledger.objects.filter(company_id =t_id).values('opening_blnc')
         sledg=sum(ledgerstotal.values_list('opening_blnc',flat=True))
@@ -5195,11 +5195,13 @@ def balancesheet(request):
     rtfd=std1.filter(under =t_id).values('rate_of_duty')  
     print("hi")
     pca=sum(st.values_list('value',flat=True))
-    # prtfd=sum(rtfd.values_list('rate_of_duty',flat=True))
-    # pflose=pca-prtfd
-    TA=0
-    
-    TA=sclob+sbdob
+    print(pca)
+    prtfd=sum(rtfd.values_list('rate_of_duty',flat=True))
+    pflose=pca-prtfd
+    TL=0
+    print('profit a')   
+    print(pflose)
+    TL=sclob+sbdob
     TAPL=0
     A=TA
     L=TL
@@ -5215,7 +5217,7 @@ def balancesheet(request):
             
             TA=TA+d
     
-    print('profit a')    
+  
     
     if pca>sledg:
             dif=pca-sledg
@@ -5248,6 +5250,7 @@ def balancesheet(request):
              'siob':siob,
              'pca':pca,
              'sca':sca,
+             'pflose': pflose,
              'TL':TL,
              'TA':TA,
              'sledg':sledg,
@@ -5267,93 +5270,153 @@ def balancesheet(request):
     return render(request,'balancesheet.html',context)  
 
 def voucher1(request):
-    return render(request,'vouchertype.html')          
-def groupsummary(request,lk):#ann
-    n=lk
-    msg1="April 01 to 31" 
-    if n==1:
-     subg1=tally_group.objects.filter(group_under='Current Liabilities').values('group_name')
-     subg=tally_group.objects.filter(group_under='Current Liabilities').values('id')
-     print('hai')
-     print( subg1)
-     list1=list(subg)
-    #  print(list1[1])
-     vals =[]
-     for p in  list1:
-      vals+=list(p.values())
-      print (vals)
-      cont=len(vals)
-      print(cont)
-      n=vals[0]
-      #cd1=Ledger_vouchers_new.objects.filter(SubGroup_id=n) 
-     # cd=Ledger_vouchers_new.objects.filter(group_id=n) 
-      cd=tally_ledger.objects.filter(under='Current_Liabilities',opening_blnc_type='Cr').values() 
-      print(cd)
-     
-      c=sum(cd.values_list('opening_blnc',flat=True))
-      print(c)  
-      d=sum(cd.values_list('opening_blnc',flat=True))
-      print(d)
-      if (c>d):
-            s=c-d
-      else :
-            s=d-c
-    #   total1 = sum(cd.values_list('closing_balance', flat=True)) 
-      name="Current Liabilities"
-      return render(request,'groupsummary.html',{'msg1':msg1,'subgrp':subg1,'s':s,'c':c})
-    if n==2:
-      name1="Branch Divisions" 
-      
-      group= tally_group.objects.get(group_name='Branch Divisions')
-      comp = Companies.objects.get(id = group.company_id)
-      cd=tally_ledger.objects.filter(under='Branch Divisions',opening_blnc_type='Cr').values() 
-      print(cd)
-      dc=tally_ledger.objects.filter(under='Branch Divisions',opening_blnc_type='Dr').values() 
-      print(cd)
-      c=sum(cd.values_list('opening_blnc',flat=True))
-      print(c)  
-      d=sum(dc.values_list('opening_blnc',flat=True))
-      print(d)
-      if (c>d):
-            s=c-d
-      else :
-            s=d-c
-    #   voucher = Ledger_vouchers_new.objects.filter(group_id = group.id)
-    #   ledger=tally_ledger.objects.filter(grp_id = group.id)
+    return render(request,'vouchertype.html') 
+def groupsummary(request):#ann  
+      if 't_id' in request.session:
+        if request.session.has_key('t_id'):
+            t_id = request.session['t_id']
+        else:
+            return redirect('/')
+        g=tally_group.objects.filter(company_id =t_id).values()  
+        gnam=g.filter(group_under='Current Liabilities').values()
+        comp = Companies.objects.get(id =t_id)
+        c=tally_ledger.objects.filter(under='Current_Liabilities',current_blnc_type='Cr').values() 
+       
+        d=tally_ledger.objects.filter(under='Current_Liabilities',current_blnc_type='Dr').values() 
+        print("hhh")
+        cc=sum(c.values_list('current_blnc',flat=True))
+        print(cc)
+        s=0  
+        dd=sum(d.values_list('current_blnc',flat=True))
+        print(dd)
+        if (cc>dd):
+            s=cc-dd
+        else :
+            s=dd-cc
+        context = {
+                'company':comp,
+                'ledger':ledger,
+                'gnam':gnam ,
+                's':s                 
+              }       
+        return render(request,'groupsummary.html',context)
+def bd_groupsummary(request):#ann  
+      if 't_id' in request.session:
+        if request.session.has_key('t_id'):
+            t_id = request.session['t_id']
+        else:
+            return redirect('/')
+        g=tally_group.objects.filter(company_id =t_id).values()  
+        comp = Companies.objects.get(id =t_id)
+        c=tally_ledger.objects.filter(under='Branch_Divisions',current_blnc_type='Cr').values() 
         
-    # debit_total = credit_total = 0
+        d=tally_ledger.objects.filter(under='Branch_Divisions',current_blnc_type='Dr').values() 
+        print("hhh")
+        cc=sum(c.values_list('current_blnc',flat=True))
+        print(cc)
+        s=0  
+        gnam="Branch and divisions"
+        dd=sum(d.values_list('current_blnc',flat=True))
+        print(dd)
+        if (cc>dd):
+            s=cc-dd
+        else :
+            s=dd-cc
+        print(s)    
+        context = {
+                'company':comp,
+                'ledger':ledger,
+                'gnam':gnam ,
+                's':s                 
+              }       
+        return render(request,'vchr_grp_summary.html',context)    
+# def groupsummary(request,lk):#ann
+#     n=lk
+#     msg1="April 01 to 31" 
+#     if n==1:
+   
+#      subg1=tally_group.objects.filter(group_under='Current Liabilities').values('group_name')
+#      subg=tally_group.objects.filter(group_under='Current Liabilities').values('id')
+#      print('hai')
+#      print( subg1)
+#      list1=list(subg)
+#     #  print(list1[1])
+#      vals =[]
+#      for p in  list1:
+#       vals+=list(p.values())
+#       print (vals)
+#       cont=len(vals)
+#       print(cont)
+#       n=vals[0]
+#       #cd1=Ledger_vouchers_new.objects.filter(SubGroup_id=n) 
+#      # cd=Ledger_vouchers_new.objects.filter(group_id=n) 
+#       cd=tally_ledger.objects.filter(under='Current_Liabilities',opening_blnc_type='Cr').values() 
+#       print(cd)
+     
+#       c=sum(cd.values_list('opening_blnc',flat=True))
+#       print(c)  
+#       d=sum(cd.values_list('opening_blnc',flat=True))
+#       print(d)
+#       if (c>d):
+#             s=c-d
+#       else :
+#             s=d-c
+#     #   total1 = sum(cd.values_list('closing_balance', flat=True)) 
+#       name="Current Liabilities"
+#       return render(request,'groupsummary.html',{'msg1':msg1,'subgrp':subg1,'s':s,'c':c})
+#     if n==2:
+#       name1="Branch Divisions" 
+      
+#       group= tally_group.objects.get(group_name='Branch Divisions')
+#       comp = Companies.objects.get(id = group.company_id)
+#       cd=tally_ledger.objects.filter(under='Branch Divisions',opening_blnc_type='Cr').values() 
+#       print(cd)
+#       dc=tally_ledger.objects.filter(under='Branch Divisions',opening_blnc_type='Dr').values() 
+#       print(cd)
+#       c=sum(cd.values_list('opening_blnc',flat=True))
+#       print(c)  
+#       d=sum(dc.values_list('opening_blnc',flat=True))
+#       print(d)
+#       if (c>d):
+#             s=c-d
+#       else :
+#             s=d-c
+#     #   voucher = Ledger_vouchers_new.objects.filter(group_id = group.id)
+#     #   ledger=tally_ledger.objects.filter(grp_id = group.id)
+        
+#     # debit_total = credit_total = 0
 
-    # for led in ledger:
+#     # for led in ledger:
 
-    #         led.c_balance = 0 if led.c_balance is None else led.c_balance 
-    #         if led.c_type == 'Dr':
-    #             debit_total  = debit_total +  led.c_balance
-    #         else:
-    #             credit_total = credit_total + led.c_balance
+#     #         led.c_balance = 0 if led.c_balance is None else led.c_balance 
+#     #         if led.c_type == 'Dr':
+#     #             debit_total  = debit_total +  led.c_balance
+#     #         else:
+#     #             credit_total = credit_total + led.c_balance
            
         
-    # d = debit_total
-    # c = credit_total
+#     # d = debit_total
+#     # c = credit_total
 
-    # if total_balance.objects.filter(group_id = group.id).exists():
-    #         balance = total_balance.objects.get(group_id = group.id)
-    #         balance.total_debit = debit_total
-    #         balance.total_credit = credit_total
+#     # if total_balance.objects.filter(group_id = group.id).exists():
+#     #         balance = total_balance.objects.get(group_id = group.id)
+#     #         balance.total_debit = debit_total
+#     #         balance.total_credit = credit_total
             
-    #         balance.save()
-    # else :
-    #         balance = total_balance( total_debit =debit_total, total_credit = credit_total,company = comp,group = group)
-    #         balance.save()
+#     #         balance.save()
+#     # else :
+#     #         balance = total_balance( total_debit =debit_total, total_credit = credit_total,company = comp,group = group)
+#     #         balance.save()
 
-    context = {
-                    'company':comp,
-                    'ledger':ledger,
-                    'group':group,
-                    'd': d,
-                    'c':c,
+#     context = {
+#                     'company':comp,
+#                     'ledger':ledger,
+#                     'group':group,
+#                     'd': d,
+#                     'c':c,
                     
-        }       
-    return render(request,'vchr_grp_summary.html',context)
+#         }       
+#     return render(request,'vchr_grp_summary.html',context)
  
           
 def ledgergroupsummary(request,pk):#ann

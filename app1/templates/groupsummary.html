@@ -45,10 +45,10 @@
            
       </thead>
       <tbody>
-        {% for i in subgrp %} 
+        {% for i in gnam %} 
         
            <tr>
-            <td  colspan="2"><a href="{% url 'groupsummary' 2 %}" class="btns_prnt">{{i.group_name}} </a></td>
+            <td  colspan="2"><a href="{% url 'groupsummary' %}" class="btns_prnt">{{i.group_name}} </a></td>
             {% endfor %}  
             <td  colspan="4" class="a" ></td>
               
@@ -56,7 +56,7 @@
            </tr>
            <tr>
             <td colspan="2" >Grand Total</td>
-            <td colspan="3" class='a' >{{c}}</td>
+            <td colspan="3" class='a' >{{s}}</td>
             <td colspan="3" class='a'></td>
         </tr>
                
