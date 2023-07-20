@@ -334,7 +334,7 @@ urlpatterns = [
     path('bd_groupsummary>',views.bd_groupsummary,name='bd_groupsummary'),#groupsummary ann
     path('ledgergroupsummary/<int:pk>',views.ledgergroupsummary,name='ledgergroupsummary'),#groupledger ann
     path('ledgersummary/<int:lk><int:sk>',views.ledgersummary,name='ledgersummary'),#groupledger ann
-    path('ledgersummary1/<int:lk>',views.ledgersummary1,name='ledgersummary1'),#groupledger ann
+    path('ledgersummary1/',views.ledgersummary1,name='ledgersummary1'),#groupledger ann
     path('listofledger/<int:pk>',views.listofledger,name='listofledger'),#ann
 
 #......................Niyas........................

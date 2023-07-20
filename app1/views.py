@@ -5460,9 +5460,7 @@ def ledgergroupsummary(request,pk):#ann
                     
         }       
      return render(request,'group_summary.html',context)
-def ledgergroupsummary1(request,pk):#ann
-    
-     group= tally_group.objects.get(group_name=pk)
+def ledgergroupsummary1(request,pk):
      comp = Companies.objects.get(id=group.company_id)
      voucher = Ledger_vouchers_new.objects.filter(group_id = group.id)
      ledger=tally_ledger.objects.filter(grp_id = group.id)
@@ -5503,15 +5501,37 @@ def ledgergroupsummary1(request,pk):#ann
         }       
      return render(request,'group_summary.html',context) 
   
-def ledgersummary1(request,lk):#ann
-    ledgname =tally_ledger.objects.get(id=lk)
-    v=Ledger_vouchers_new.objects.filter(ledger_id=lk).annotate(month=TruncMonth('date')).values('month').annotate(credit=Sum('credit'),debit=Sum('debit')).order_by('month').values("month", "credit","debit")                              
-    #ledgname=ledgers.objects.values_list('id', 'ledger')
-    mnths = Months.objects.all()
-    c=sum(v.values_list('credit',flat=True))
-     
-    d=sum(v.values_list('debit',flat=True))
-    return render(request,'ledgersummary1.html',{'name':ledgname,'v':v,'c':c,'d':d})     
+def ledgersummary1(request):#ann
+      if 't_id' in request.session:
+        if request.session.has_key('t_id'):
+            t_id = request.session['t_id']
+        else:
+            return redirect('/')
+        
+        g=tally_group.objects.filter(company_id =t_id).values()  
+        comp = Companies.objects.get(id =t_id)
+        c=tally_ledger.objects.filter(under='Current_Liabilities',current_blnc_type='Cr',company_id=t_id).values() 
+        
+        d=tally_ledger.objects.filter(under='Current_Liabilities',current_blnc_type='Dr',company_id=t_id).values() 
+        print("hhh")
+        cc=sum(c.values_list('current_blnc',flat=True))
+        print(cc)
+        s=0  
+        gnam='Current_Liabilities'
+        dd=sum(d.values_list('current_blnc',flat=True))
+        print(dd)
+        if (cc>dd):
+            s=cc-dd
+        else :
+            s=dd-cc
+        print(s)    
+        context = {
+                'company':comp,
+                'ledger':ledger,
+                'gnam':gnam ,
+                's':s                 
+              }       
+        return render(request,'vchr_grp_summary.html',context)      
           
 def ledgersummary(request,lk,sk):#ann
     ledgname =tally_ledger.objects.get(id=lk)
@@ -5534,44 +5554,47 @@ def ledgersummary(request,lk,sk):#ann
     return render(request,'ledgersummary1.html',{'name':ledgname,'v':v,'s':s,'months':m,'c':c,'d':d})       
   #...views
 def listofledger(request,pk):#ann
-   # s=ledgers_vouchers.objects.all()
-    m=pk
-    l= Ledger_vouchers_new.objects.filter(date__year='2022', 
+    try :
+        m=pk
+        l= Ledger_vouchers_new.objects.filter(date__year='2022', 
                    date__month=m)
-    total1=0
-    total2=0
-    total1 = sum(l.values_list('credit', flat=True)) 
-    total2 = sum(l.values_list('debit', flat=True))               
+        total1=0
+        total2=0
+        total1 = sum(l.values_list('credit', flat=True)) 
+        total2 = sum(l.values_list('debit', flat=True))               
        
-    if m==1:
+        if m==1:
             msg1="1-Jan-22  to 31-jan-22"
-    elif m==2:
+        elif m==2:
             msg1="1-Feb-22  to 28-feb-22"
-    elif m ==3:
+        elif m ==3:
             msg1="1-March-22  to 31-March-22"
-    elif m ==4:
-        
+        elif m ==4:
              msg1="1-April-22 to 30-April-22"
-    elif m ==5:
+        elif m ==5:
              msg1="1-May-22  to 31-May-22"
-    elif m ==6:
+        elif m ==6:
             msg1="1-June-22 to 31-May-22"
-    elif m ==7:
+        elif m ==7:
             msg1="1-july-22  to 31-july-22"
-    elif m ==8:
+        elif m ==8:
              msg1="1-Aug-22  to 31-Aug-22"  
-    elif m==9:
+        elif m==9:
             msg1="1-Sep-22  to 30-Sep-22"
-    elif m ==10:
+        elif m ==10:
              msg1="1-Oct-22 to 30-Oct-22"
-    elif m ==11:
+        elif m ==11:
             msg1="1-Nov-22 to 31-Nov-22" 
-    elif m ==12:
+        elif m ==12:
              msg1="1-Dec-22 to 31-Dec-22"     
-    else:
-        msg1="July 01 to 31" 
-    return render(request,'listofledger.html',{'ledgers':l,'msg1':msg1,'total1':total1,'total2':total2})     
-
+        else:
+             msg1="July 01 to 31" 
+        return render(request, 'listofledger.html')     
+        # return render(request,'listofledger.html',{'ledgers':l,'msg1':msg1,'total1':total1,'total2':total2})     
+    except  l.DoesNotExist:
+        # Handle the case where the object doesn't exist
+         return render(request, 'listofledger.html')
+    
 ###nithya
 def capital_group_summary(request):
 
